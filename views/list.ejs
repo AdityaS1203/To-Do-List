@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>To do list</title>
+    <link rel="stylesheet" href="css/styles.css">
+  </head>
+  <body>
+    <div class="div1">
+      <h1>To Do List</h1>
+    </div>
+
+<div class="div3">
+  <form class="" action="/" method="post">
+    <input type="text" name="task" autofocus autocomplete="off" placeholder="Enter a new task">
+    <button type="submit" name="button" class="btn">Add</button>
+  </form>
+</div>
+<div class="div2">
+    <form class="" action="/delete" method="post">
+      <ul style="list-style: none;" class="unli">
+      <%for(var i=0;i<newlistitem.length;i++){%>
+        <li> <%=newlistitem[i] %><span class="span"><button type="submit" value="<%=i%>" name="btn" class="button">X</button></span></li>
+      <%}%>
+    </ul>
+    </form>
+
+</div>
+ </body>
+ <script src="js/index.js" charset="utf-8"></script>
+</html>
