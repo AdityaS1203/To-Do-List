@@ -1,90 +1,86 @@
-const express=require("express");
-const bodyParser=require("body-parser");
-const PORT=3001||process.env.PORT;
-const app=express();
-app.use(bodyParser.urlencoded({extended:true}));
-const mongoose= require("mongoose");
-mongoose.set('strictQuery', false);
-mongoose.connect("mongodb+srv://Adi:123@cluster0.rp4xp4n.mongodb.net/AmazonWebScrap");
+require('dotenv').config();
+const express = require("express");
+const bodyParser = require("body-parser");
+const PORT = process.env.PORT || 3001;
+const app = express();
 
-//since we're using ejs and there are a lot more method to do its job .hence we need to mention that we are using ejs
-
-app.set("view engine","ejs");
+app.use(bodyParser.urlencoded({ extended: true }));
+app.set("view engine", "ejs");
 app.use(express.static("public"));
 
+const mongoose = require("mongoose");
+mongoose.set('strictQuery', false);
+mongoose.connect(process.env.MONGODB_URL);
 
-const taskSch=new mongoose.Schema({
-  name:String
+
+const taskSchema = new mongoose.Schema({
+  name: String
 });
 
-const item=mongoose.model("item",taskSch);
+const item = mongoose.model("item", taskSchema);
 
-
-app.get("/",function(req,res){
-  const a=item.find()
-    .then(kaamKiList=>{
-      const arr=[];
-      for(var i=0;i<kaamKiList.length;i++){
-        arr.push(kaamKiList[i].name)
+app.get("/", function (req, res) {
+  item.find()
+    .then((kaamKiList) => {
+      const arr = [];
+      for (var i = 0; i < kaamKiList.length; i++) {
+        arr.push(kaamKiList[i].name);
       }
-      res.render("list",{newlistitem:arr});
+      res.render("list", { newlistitem: arr });
     })
-    .catch(err=>{
+    .catch((err) => {
       console.log(err);
     });
 });
 
-app.post("/",function(req,res){
-  var entered=req.body.task
-  const taskItem=new item({
-    name:entered
+app.post("/", function (req, res) {
+  var entered = req.body.task;
+  const taskItem = new item({
+    name: entered
   });
-  if(entered.trim().length!==0){
-    taskItem.save()
+  if (entered.trim().length !== 0) {
+    taskItem.save();
   }
-  res.redirect("/")
-})
-
-app.get("/delete",function(req,res){
-  const a=item.find()
-    .then(kaamKiList=>{
-      const arr=[];
-      for(var i=0;i<kaamKiList.length;i++){
-        arr.push(kaamKiList[i].name)
-      }
-      res.render("list",{newlistitem:a});
-    })
-    .catch(err=>{
-      console.log(err);
-    })
+  res.redirect("/");
 });
 
-app.post("/delete",function(req,res){
-  const btnNo=req.body.btn;
+app.get("/delete", function (req, res) {
   item.find()
-    .then(kaamKiList=>{
-      const a=[];
-      for(var i=0;i<kaamKiList.length;i++){
-        a.push(kaamKiList[i].name)
+    .then((kaamKiList) => {
+      const arr = [];
+      for (var i = 0; i < kaamKiList.length; i++) {
+        arr.push(kaamKiList[i].name);
       }
-      var naam=a[btnNo];
-      item.deleteOne({name:naam})
-        .then(()=>{
+      res.render("list", { newlistitem: arr });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
+app.post("/delete", function (req, res) {
+  const btnNo = req.body.btn;
+  item.find()
+    .then((kaamKiList) => {
+      const a = [];
+      for (var i = 0; i < kaamKiList.length; i++) {
+        a.push(kaamKiList[i].name);
+      }
+      var naam = a[btnNo];
+      item.deleteOne({ name: naam })
+        .then(() => {
           console.log("deletion successful");
           res.redirect("/");
         })
-        .catch(err=>{
+        .catch((err) => {
           console.log(err);
-        })
-    
-  })
-    .catch(err=>{
+        });
+    })
+    .catch((err) => {
       console.log(err);
     });
-    
 });
 
-
-app.listen(PORT,function(){
-  console.log("server for to do list is running");
+app.listen(PORT, function () {
+  console.log("Server for to-do list is running");
 });
